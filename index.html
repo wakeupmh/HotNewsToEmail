@@ -144,8 +144,8 @@
             const browser = await puppeteer.launch({headless: false, executablePath: exPath});
             const page = await browser.newPage();
             await page.goto('https://webmail.backsite.com.br/');
-            await page.type('#RainLoopEmail', 'desenvolvimento@backsite.com.br');
-            await page.type('#RainLoopPassword', 'backsite@desenv');
+            await page.type('#RainLoopEmail', '<yourEmail>@backsite.com.br');
+            await page.type('#RainLoopPassword', '<yourPassword>');
             await page.click('button.btn');
             await page.waitForNavigation({waitUntil: 'load'});
             try{
