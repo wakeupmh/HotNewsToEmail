@@ -140,7 +140,7 @@
               if(_li != 'undefined' && _li != undefined)
                 val+= _li +'; ';
             }
-            let exPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+            let exPath = "<yourChromePath>//chrome.exe";
             const browser = await puppeteer.launch({headless: false, executablePath: exPath});
             const page = await browser.newPage();
             await page.goto('https://webmail.backsite.com.br/');
