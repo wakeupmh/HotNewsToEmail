@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'CuprumBold';
+    src: url('../fonts/Cuprum-Bold.ttf');
+}
+@font-face {
+    font-family: 'Cuprum';
+    src: url('../fonts/Cuprum-Regular.ttf');
+}
+body{
+    font-family: 'Cuprum';
+}
+h1,h2,h3,h4,h5,strong{
+    font-family: 'CuprumBold';
+}

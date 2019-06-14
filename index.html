@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Manchetes</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <style>
+      body{
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex-direction: row;
+        text-align: center;
+        align-items: center;
+        width:100%;
+      }  
+      .divBtnContent img{
+        max-width: 35%;
+      }
+      .divBtn{
+        width: 40%;
+        background-image: linear-gradient(to bottom, #4d5975,#b3b3b3);
+        padding: 3%;
+        border-radius: 10px;
+        box-shadow: 0px 1px 4px #0000007a;
+        color: #ffffff;
+        text-shadow: 0px 0px 4px #000000ed;
+        margin:6px;
+      }
+      #responseScrapy{
+        display: none;
+        align-items: center;
+        width: 80%;
+        justify-content: center;
+        background-color: gainsboro;
+        flex-wrap: wrap;
+        flex-direction: column;
+        padding: 10px;
+        color: #464646;
+        border-radius: 5px;
+      }
+      .divBtnWpp{
+        display: inline;
+        width: 30%;
+        border: 1px solid grey;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel" id="responseScrapy">
+      <h3>Manchetes de hoje:</h3>
+      <div id="divResponse">
+
+      </div><br>
+      <div class="divBtnWpp">
+          <strong class="strongWpp"> Enviar no e-mail</strong>
+      </div><br><br>
+      <div id="close" style="color:red">Fechar</div>
+    </div>
+    <div class="container" id="container">
+      <div class="divBtn"  data-type="responseScrapy" style="">
+        <div class="divBtnContent">
+          <img src="imgs/news.svg" class="divBtnContentImg">
+          <h3 class="divBtnContentH3">Noticias de hoje</h3>
+        </div>
+      </div>
+      
+    </div>
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  <script>
+    const electron = require('electron');
+    const path = require('path')
+    const axios = require('axios');
+    const cheerio = require('cheerio');
+    const puppeteer = require('puppeteer');
+
+    let getData = html =>{
+        data = [];
+        const $ = cheerio.load(html);
+        $('.articulo-titulo a').each((i, elem)=>{
+            data.push({
+                title: $(elem).text()
+            });
+        });
+        return data;
+    }
+    // usando o cheerio para pegar os elementos html da página da url, implementa o jQuey pra selecionar os elementos
+
+
+    let request = url =>{
+        try{
+            console.log(url);
+            return axios.get(url)
+                .then(response =>{
+                    return getData(response.data);
+                    // console.log(response.data);
+                })
+                .catch(error =>{
+                    console.log(error);
+                });
+        }catch(e){
+            console.log(e);
+        }
+
+    }
+    document.addEventListener('click', (e)=>{
+        if(['divBtnContentImg','divBtnContentH3','divBtnContent', 'divBtn'].includes(e.target.className)){
+          if(e.target.parentNode.parentNode.getAttribute('data-type') == 'responseScrapy'){
+              let _div = 'responseScrapy';
+              document.getElementById(_div).style.display = 'flex';
+              document.getElementById('container').style.display = 'none';
+              document.getElementById('divResponse').innerHTML = '';
+              handler.getScrapy();
+              (async () => {
+                let exPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+                const browser = await puppeteer.launch({headless: false, executablePath: exPath});
+                const page = await browser.newPage();
+                await page.goto(`https://brasil.elpais.com`);
+                
+                // await browser.close();
+              })();
+          }
+        }else if(['divBtnWpp', 'divImgWpp', 'strongWpp'].includes(e.target.className)){
+          (async () => {
+            let li = document.getElementsByTagName('li');
+            var val = 'Manchetes: ';
+            for(let i in li){
+              let _li = li[i].textContent;
+              if(_li != 'undefined' && _li != undefined)
+                val+= _li +'; ';
+            }
+            let exPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
+            const browser = await puppeteer.launch({headless: false, executablePath: exPath});
+            const page = await browser.newPage();
+            await page.goto('https://webmail.backsite.com.br/');
+            await page.type('#RainLoopEmail', 'desenvolvimento@backsite.com.br');
+            await page.type('#RainLoopPassword', 'backsite@desenv');
+            await page.click('button.btn');
+            await page.waitForNavigation({waitUntil: 'load'});
+            try{
+                await page.waitForSelector('.buttonCompose');
+                await page.click('.buttonCompose');
+                await page.type('.ui-autocomplete-input', 'e.rios@backsite.com.br');
+                await page.waitFor(400);
+                await page.click('textarea');
+                await page.type('textarea', `${val}`); 
+                await page.waitFor(400);
+                await page.waitForSelector('.button-send');
+                await page.click('.button-send');
+            }catch(e){
+
+            }
+          })();
+        }
+        if(e.target.id=='close'){
+            e.target.parentNode.style.display = 'none';
+            document.getElementById('container').style.display = 'flex';
+        }
+    });
+    var handler = {
+        modelScrapy:(title)=>{
+            elChild = document.createElement('ul');
+            elChild.innerHTML = `<li>${title}</li>`;
+            document.getElementById('divResponse').appendChild(elChild);
+        },
+        getScrapy:()=>{
+            request('https://brasil.elpais.com/').then(response =>{
+                for(let i = 0; i<10; i++){
+                  handler.modelScrapy(response[i].title);
+                }
+            });
+        }
+
+    }
+  </script>
+  </body>
+</html>
