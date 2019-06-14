@@ -14,3 +14,7 @@ Threfore open your cmd (if you are a win user) and navigate to root of this repo
 * Cheerio;
 * Puppeteer;
 
+This project just request to [ElPais](https://brasil.elpais.com) with axios, and cheerio scraping the data (using jQuery for this).
+The puppeteer opens the chrome navigator and logon into webmail.backsite.com.br to send e-mail.
+
+Simple like breath 🐱‍🐉
