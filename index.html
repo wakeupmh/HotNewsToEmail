@@ -34,26 +34,6 @@
         text-shadow: 0px 0px 4px #000000ed;
         margin:6px;
       }
-      #responseScrapy{
-        display: none;
-        align-items: center;
-        width: 80%;
-        justify-content: center;
-        background-color: gainsboro;
-        flex-wrap: wrap;
-        flex-direction: column;
-        padding: 10px;
-        color: #464646;
-        border-radius: 5px;
-      }
-      .divBtnWpp{
-        display: inline;
-        width: 30%;
-        border: 1px solid grey;
-        padding: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
     </style>
   </head>
   <body>
@@ -68,47 +48,48 @@
     </div>
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
-  <script>
-    const electron = require('electron');
-    const path = require('path')
-    const axios = require('axios');
-    const cheerio = require('cheerio');
-    const puppeteer = require('puppeteer');
-    
-    let getData = html => {
-        data = [];
-        const $ = cheerio.load(html);
-        $('.articulo-titulo a').each((i, elem) => {
-            data.push({
-                title: $(elem).text()
-            });
-        });
-        return data;
-    }
-    // usando o cheerio para pegar os elementos html da página da url, implementa o jQuey pra selecionar os elementos
+    <script src="js/nucleo.noticias.js"></script>
+    <script>
+      const electron = require('electron');
+      const path = require('path')
+      const axios = require('axios');
+      const cheerio = require('cheerio');
+      const puppeteer = require('puppeteer');
 
-    let request = url => {
-      try {
-          console.log(url);
-          return axios.get(url)
-              .then(response => {
-                  return getData(response.data);
-              })
-              .catch(error => {
-                  console.log(error);
+      let getData = html => {
+          data = [];
+          const $ = cheerio.load(html);
+          $('.articulo-titulo a').each((i, elem) => {
+              data.push({
+                  title: $(elem).text()
               });
-      } catch (e) {
-          console.log(e);
+          });
+          return data;
       }
+      // usando o cheerio para pegar os elementos html da página da url, implementa o jQuey pra selecionar os elementos
 
-    }
-    document.addEventListener('click', (e)=>{
-        if(['divBtnContentImg','divBtnContentH3','divBtnContent', 'divBtn'].includes(e.target.className)){
-          if(e.target.parentNode.parentNode.getAttribute('data-type') == 'responseScrapy'){
-              getNoticias();
-          }
+      let request = url => {
+        try {
+            console.log(url);
+            return axios.get(url)
+                .then(response => {
+                    return getData(response.data);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        } catch (e) {
+            console.log(e);
         }
-     });
-  </script>
+
+      }
+      document.addEventListener('click', (e)=>{
+          if(['divBtnContentImg','divBtnContentH3','divBtnContent', 'divBtn'].includes(e.target.className)){
+            if(e.target.parentNode.parentNode.getAttribute('data-type') == 'responseScrapy'){
+                getNoticias();
+            }
+          }
+       });
+    </script>
   </body>
 </html>
