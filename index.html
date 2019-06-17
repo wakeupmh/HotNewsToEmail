@@ -84,11 +84,11 @@
     const axios = require('axios');
     const cheerio = require('cheerio');
     const puppeteer = require('puppeteer');
-
-    let getData = html =>{
+    
+    let getData = html => {
         data = [];
         const $ = cheerio.load(html);
-        $('.articulo-titulo a').each((i, elem)=>{
+        $('.articulo-titulo a').each((i, elem) => {
             data.push({
                 title: $(elem).text()
             });
@@ -97,92 +97,28 @@
     }
     // usando o cheerio para pegar os elementos html da página da url, implementa o jQuey pra selecionar os elementos
 
-
-    let request = url =>{
-        try{
-            console.log(url);
-            return axios.get(url)
-                .then(response =>{
-                    return getData(response.data);
-                    // console.log(response.data);
-                })
-                .catch(error =>{
-                    console.log(error);
-                });
-        }catch(e){
-            console.log(e);
-        }
+    let request = url => {
+      try {
+          console.log(url);
+          return axios.get(url)
+              .then(response => {
+                  return getData(response.data);
+              })
+              .catch(error => {
+                  console.log(error);
+              });
+      } catch (e) {
+          console.log(e);
+      }
 
     }
     document.addEventListener('click', (e)=>{
         if(['divBtnContentImg','divBtnContentH3','divBtnContent', 'divBtn'].includes(e.target.className)){
           if(e.target.parentNode.parentNode.getAttribute('data-type') == 'responseScrapy'){
-              let _div = 'responseScrapy';
-              document.getElementById(_div).style.display = 'flex';
-              document.getElementById('container').style.display = 'none';
-              document.getElementById('divResponse').innerHTML = '';
-              handler.getScrapy();
-              (async () => {
-                let exPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
-                const browser = await puppeteer.launch({headless: false, executablePath: exPath});
-                const page = await browser.newPage();
-                await page.goto(`https://brasil.elpais.com`);
-                
-                // await browser.close();
-              })();
+              getNoticias();
           }
-        }else if(['divBtnWpp', 'divImgWpp', 'strongWpp'].includes(e.target.className)){
-          (async () => {
-            let li = document.getElementsByTagName('li');
-            var val = 'Manchetes: ';
-            for(let i in li){
-              let _li = li[i].textContent;
-              if(_li != 'undefined' && _li != undefined)
-                val+= _li +'; ';
-            }
-            let exPath = "<yourChromePath>//chrome.exe";
-            const browser = await puppeteer.launch({headless: false, executablePath: exPath});
-            const page = await browser.newPage();
-            await page.goto('https://webmail.backsite.com.br/');
-            await page.type('#RainLoopEmail', '<yourEmail>@backsite.com.br');
-            await page.type('#RainLoopPassword', '<yourPassword>');
-            await page.click('button.btn');
-            await page.waitForNavigation({waitUntil: 'load'});
-            try{
-                await page.waitForSelector('.buttonCompose');
-                await page.click('.buttonCompose');
-                await page.type('.ui-autocomplete-input', 'e.rios@backsite.com.br');
-                await page.waitFor(400);
-                await page.click('textarea');
-                await page.type('textarea', `${val}`); 
-                await page.waitFor(400);
-                await page.waitForSelector('.button-send');
-                await page.click('.button-send');
-            }catch(e){
-
-            }
-          })();
         }
-        if(e.target.id=='close'){
-            e.target.parentNode.style.display = 'none';
-            document.getElementById('container').style.display = 'flex';
-        }
-    });
-    var handler = {
-        modelScrapy:(title)=>{
-            elChild = document.createElement('ul');
-            elChild.innerHTML = `<li>${title}</li>`;
-            document.getElementById('divResponse').appendChild(elChild);
-        },
-        getScrapy:()=>{
-            request('https://brasil.elpais.com/').then(response =>{
-                for(let i = 0; i<10; i++){
-                  handler.modelScrapy(response[i].title);
-                }
-            });
-        }
-
-    }
+     });
   </script>
   </body>
 </html>
