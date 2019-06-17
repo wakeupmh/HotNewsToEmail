@@ -1,5 +1,5 @@
+const exPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"; //your path to chrome.exe
 const getNoticias = async() =>{
-    let exPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
     const browser = await puppeteer.launch({
         headless: false,
         executablePath: exPath
@@ -19,7 +19,6 @@ const getNoticias = async() =>{
 
 const enviaNoticias = async() => {
     console.log(window.val);
-    let exPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";
     const browser = await puppeteer.launch({
         headless: false,
         executablePath: exPath
@@ -30,8 +29,8 @@ const enviaNoticias = async() => {
         waitUntil: 'load'
     });
     try{
-        await page.type('#RainLoopEmail', 'desenvolvimento@backsite.com.br');
-        await page.type('#RainLoopPassword', 'backsite@desenv');
+        await page.type('#RainLoopEmail', '<yourEmail>');
+        await page.type('#RainLoopPassword', '<yourPassword>');
         await page.click('button.btn');
     }catch(e){
         console.log(e);
@@ -42,21 +41,17 @@ const enviaNoticias = async() => {
     try {
         await page.waitForSelector('.buttonCompose');
         await page.click('.buttonCompose');
-        await page.type('.ui-autocomplete-input', 'emersonrios@gmail.com');
+        await page.type('.ui-autocomplete-input', '<EmailToSend>');
         const data = new Date();
         await page.type('[data-bind="textInput: subject, hasFocus: subject.focused"]', 'Noticias do El País '+ ("0" + data.getDate()).substr(-2) + "/" + ("0" + (data.getMonth() + 1)).substr(-2) + "/" + data.getFullYear());
-        // await page.waitFor(4000);
         await page.waitForSelector('#cke_1_contents');
         await page.click('#cke_1_contents');
-        // await page.waitFor(4000);
         await page.type('#cke_1_contents', window.val);
         await page.waitFor(400);
         await page.waitForSelector('.button-send');
         await page.click('.button-send');
-        // await page.waitFor(4000);
         await page.waitForSelector('div.modal.hide.b-compose.fade',{hidden:true});
         await browser.close();
-        await document.getElementById("closeManchetes").click();
     } catch (e) {
         console.log(e);
     }
